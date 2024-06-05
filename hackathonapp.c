@@ -5,6 +5,7 @@ void runBlindSpotDetection(void);
 void runAirbagActuator(void);
 void runReverseCameraCat(void);
 void runDrivingRangeEstimator(void);
+void runMonitorTyrePressure(void);
 
 int main()
 {
@@ -76,7 +77,7 @@ void runMonitorTyrePressure(void)
     float l_threshold;
     long unsigned int l_time_side;
 
-    while (readBlindSpotDetectionFile(tpms_fp, &l_time_side, &l_threshold) != NULL) {
+    while (readTyreMonitorRecord(tpms_fp, &l_time_side, &l_threshold) != NULL) {
         int result = activateBlindSpot(l_time_side, l_threshold);
         printf("BS: %d\n", result);
 
@@ -97,9 +98,9 @@ void runReverseCameraCat(void)
     float l_threshold;
     long unsigned int l_time_side;
 
-    while (readBlindSpotDetectionFile(reverse_fp, &l_time_side, &l_threshold) != NULL) {
-        int result = activateBlindSpot(l_time_side, l_threshold);
-        printf("BS: %d\n", result);
+    while (readReverseCategoryFile(reverse_fp, &l_time_side, &l_threshold) != NULL) {
+        const char* object_classification = classifyObjectsWhileReversing(l_time_side, l_threshold);
+        printf("Reverse CAM: %d\n", object_classification);
 
     }
 
