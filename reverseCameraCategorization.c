@@ -20,7 +20,6 @@ int readLookupTable(const char* filename, struct Category* ct)
 
 FILE* readReverseCategoryFile(FILE* fp, unsigned long int* time_taken)
 {
-    /* Read data from the database and validate its integrity */
     if (fscanf(fp, "%lu", time_taken))
     {
         return fp;
