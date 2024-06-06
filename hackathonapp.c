@@ -13,13 +13,12 @@ int main()
     initTermios(0);
     while (!kbhit())
     {
-        // runLaneDeparture();
-        // runBlindSpotDetection(); 
-        // runAirbagActuator();
-        // runReverseCameraCat();   
-        // runDrivingRangeEstimator();
-        runMonitorTyrePressure();
-        break;
+        runLaneDeparture();
+        runBlindSpotDetection(); 
+        runAirbagActuator();
+        runReverseCameraCat();   
+        runDrivingRangeEstimator();
+        runMonitorTyrePressure();       
     }
     
     resetTermios();
@@ -70,10 +69,7 @@ void runMonitorTyrePressure(void)
     struct Tyre tyre = readTyreMonitorRecord("files/TPMonitor.dat", record_num);
     unsigned char result = monitorTyrePressure(tyre);
     printf("Tyre Pressure: %u\n", result);
-    while(tyre)
-    {
-        runMonitorTyrePressure();
-    }
+
 }
 
 void runReverseCameraCat(void)
