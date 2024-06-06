@@ -10,7 +10,6 @@ FILE* readLaneDepartureFile(FILE* fp, float* f1, float* f2, float* f3, float* f4
 
     // Read the data from the file
     if (fscanf(fp, "%f %f %f %f", f1, f2, f3, f4) != 4) {
-        printf("Error: could not read data from file\n");
         return NULL;
     }
 

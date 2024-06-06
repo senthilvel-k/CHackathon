@@ -18,7 +18,8 @@ int main()
         // runAirbagActuator();
         // runReverseCameraCat();   
         // runDrivingRangeEstimator();
-        // runMonitorTyrePressure();
+        runMonitorTyrePressure();
+        break;
     }
     
     resetTermios();
@@ -46,25 +47,21 @@ void runLaneDeparture(void)
 
 }
 
-void runBlindSpotDetection(void)
-{
-   FILE* blind_fp = fopen("files/BSDetection.txt", "r");
-    if (blind_fp == NULL) {
-        printf("Error: could not open BSDetection.txt\n");  /* Check if file available or not */
+void runBlindSpotDetection(void) {
+    FILE *fp = fopen("files/BSDetection.txt", "r");
+    if (fp == NULL) {
+        printf("Error: Could not open file\n");
         return;
     }
-
-    float l_threshold;
-    long unsigned int l_time_side;
-
-    while (readBlindSpotDetectionFile(blind_fp, &l_time_side, &l_threshold) != NULL) {
-        int result = activateBlindSpot(l_time_side, l_threshold);
-        printf("BS: %d\n", result);
-
+ 
+    unsigned long int time_side;
+    float threshold;
+    while (fscanf(fp, "%lu %f", &time_side, &threshold) == 2) {
+        uint8_t status = activateBlindSpot(time_side, threshold);
+        printf("Blind spot status: %u\n", status);
     }
-
-    fclose(blind_fp);
-
+ 
+    fclose(fp);
 }
 
 void runMonitorTyrePressure(void)
@@ -73,32 +70,30 @@ void runMonitorTyrePressure(void)
     struct Tyre tyre = readTyreMonitorRecord("files/TPMonitor.dat", record_num);
     unsigned char result = monitorTyrePressure(tyre);
     printf("Tyre Pressure: %u\n", result);
+    while(tyre)
+    {
+        runMonitorTyrePressure();
+    }
 }
 
 void runReverseCameraCat(void)
 {
-       struct Category categories[3];
-
-    unsigned long int time_taken;
-   FILE* reverse_fp = fopen("files/ReverseData.txt", "r");
-    if (reverse_fp == NULL) {
-        printf("Error: could not open ReverseData.txt\n"); /* Check if file available or not */
+    // Reading the lookup table
+    struct Category categories[100]; // Assuming there are less than 100 categories
+    int category_count = readLookupTable("files/lookup_table.txt", categories);
+    if (category_count == 0) {
+        printf("Error: Unable to read lookup table.\n");
         return;
     }
-
-        int cat_count = readLookupTable("files/lookup_table.txt", categories);
-
-    while (readReverseCategoryFile(reverse_fp, &time_taken) != NULL) {
-        const char* result = classifyObjectsWhileReversing(categories, cat_count, time_taken);
-        printf("Reverse CAM: %d\n", result);
-
-    }
-
+ 
+    // Opening the reverse category file
+    FILE* reverse_fp = fopen("files/ReverseData.txt", "r");
+    if (reverse_fp == NULL) {
+        printf("Error: Unable to open ReverseData.txt\n");
+        return;
     fclose(reverse_fp);
-
-
+    }
 }
-
 void runAirbagActuator(void)
 {
     FILE* airbagacc = fopen("files/ABActuator.txt","r"); /* Check if file available or not */
@@ -113,8 +108,10 @@ void runAirbagActuator(void)
     while(readAirbagActuatorFile(airbagacc,&AB)!= NULL)
     {
         int result = activateAirbags(AB);
-        printf("result: %d\n",result);
+        printf("AirbagActuator: %d\n",result);
+        
     }
+    fclose(airbagacc);
 }
 
 void runDrivingRangeEstimator(void)

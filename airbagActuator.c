@@ -23,7 +23,6 @@ int activateAirbags(struct Airbag ab)
     ab.final_speed = ab.final_speed * (5.0 / 18.0);
  
     // Calculation of actual g-force
-    // 9.81 is acceleration due to gravity  
     gforce_act = ((fabs(ab.final_speed - ab.init_speed)) / (ab.end_time - ab.start_time)) / 9.81;
  
     if (ab.gforce < gforce_act) {
